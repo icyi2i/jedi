@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+  <meta name="description" content="Jedi - JavaScript based editor">
+  <meta name="keywords" content="Simple, Editor, JavaScript, Embeddable">
+  <meta name="author" content="Sarthak Gambhir">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Jedi - DEMO</title>
+	<link rel="stylesheet" type="text/css"
+		href={{url_for("static", filename="css/jedi.css")}}>
+	<link rel="stylesheet" type="text/css"
+		href={{url_for("static", filename="css/bootstrap.min.css")}}>
+</head>
+<body>
+	<main>
+		<div class="container">
+				<div id="jedi-editor" class="row">
+					<div class="col-12 my-2">
+						<p class="text-center h4 my-3">
+							<strong>Jedi</strong> - A javascript based editor!</p>
+					</div>
+					<div id="jedi-menu" class="col-12 row m-0">
+						<div class="col-md-6 btn-group w-100 m-0 p-0 d-flex" role="group">
+						  <button id="bold-btn" class="btn btn-light">
+						  	<strong>B</strong>
+						  </button>
+						  <button id="italic-btn" class="btn btn-light">
+						  	<em>i</em>
+						  </button>
+						  <button id="underline-btn" class="btn btn-light">
+						  	<u>U</u>
+						  </button>
+						  <button id="code-btn" class="btn btn-light">{code}</button>
+						  <button class="heading-btn btn btn-light">h1</button>
+					    <button class="heading-btn btn btn-light">h2</button>
+					    <button class="heading-btn btn btn-light">h3</button>
+					    <button class="heading-btn btn btn-light">h4</button>
+					    <button class="heading-btn btn btn-light">h5</button>
+					    <button class="heading-btn btn btn-light">h6</button>
+					    <button id="hr-btn" class="btn btn-light">hr</button>
+					    <button id="br-btn" class="btn btn-light">br</button>
+					    <button id="lead-btn" class="btn btn-light lead">p</button>
+						</div>
+					</div>
+					<div class="col-12 row m-0">
+					  <div class="col-lg-6 p-0">
+							<textarea id="jedi-text" name="content"
+								class="form-control" placeholder="Write something"></textarea>
+					  </div>
+					  <div class="col-lg-6 p-0">
+							<div id="jedi-preview">
+							</div>
+					  </div>
+					</div>
+				</div>
+		</div>
+	</main>
+	<script src={{url_for("static", filename="js/jquery.min.js")}}
+		type="text/javascript" charset="utf-8"></script>
+	<script src={{url_for("static", filename="js/popper.min.js")}}
+		type="text/javascript" charset="utf-8"></script>
+	<script src={{url_for("static", filename="js/bootstrap.min.js")}}
+		type="text/javascript" charset="utf-8"></script>
+	<script src={{url_for("static", filename="js/jedi.js")}}
+		type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
