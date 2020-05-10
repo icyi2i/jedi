@@ -1,15 +1,11 @@
-:root{
-	--border:#aaaa;
-};
-
 #jedi-editor{
 	width: 100%;
 	display: flex
 }
 
-#jedi-text, #jedi-preview{
+#jedi-writer, #jedi-preview{
 	width: 100%;
-	border: 2px solid var(--border);
+	border: 2px solid #aaaa;
 	padding: 5px;
 	overflow-y: scroll;
 	height: 80vh!important;
@@ -17,14 +13,44 @@
 	max-height: 80vh!important;
 }
 
-#jedi-menu button{
-	flex: max-content
+#jedi-menu div.group{
+	display: contents!important;
+	font-size: 20px;
 }
 
-@media screen and (max-width: 1024px) {
-  #jedi-text, #jedi-preview {
-	height: 40vh!important;
-	min-height: 40vh!important;
-	max-height: 40vh!important;
-	}
+#jedi-menu div.group > button, #jedi-menu div.group > .dropdown{
+	flex: auto;
+	display: block;
+}
+
+button.dropdown-toggle{
+	width: 100%;
+	min-height: 100%!important;
+	font-size: 20px!important;
+}
+
+.block{
+	border: 1px solid #ddd;
+	margin: 5px;
+	padding: 5px;
+	background-color: #f8f9fa;
+}
+.code{
+	background-color: #333;
+	color: var(--light)!important;
+	padding: 20px!important;
+	display: block;
+	overflow-x: scroll;
+}
+
+.current{
+	border: 2px solid #8bb3ff;
+}
+
+button:focus{
+	background: #8bb3ff!important
+}
+
+.dropdown-item:hover{
+	border: 1px solid #8bb3ff;
 }

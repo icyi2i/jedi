@@ -2,143 +2,184 @@
 // DOM elements - Editor panes
 // ================================================================
 const editor = $("#jedi-editor")[0]
-const text = $("#jedi-text")[0]
-const preview = $("#jedi-preview")[0]
+const writer = $("#jedi-writer")[0]
 
 // ================================================================
 // DOM elements - Editor menu buttons
 // ================================================================
-const bold_btn = $("#bold-btn")[0]
-const italic_btn = $("#italic-btn")[0]
-const underline_btn = $("#underline-btn")[0]
-const code_btn = $("#code-btn")[0]
-const heading_btns = $(".heading-btn")
-const hr_btn = $("#hr-btn")[0]
-const br_btn = $("#br-btn")[0]
-const lead_btn = $("#lead-btn")[0]
+const add_block_btn = $("#add-block-btn")[0]
+const remove_block_btn = $("#remove-block-btn")[0]
+const formatting_btns = $("#jedi-menu button:not(.dropdown-toggle)")
 
 // ================================================================
-// DOM events - Menu button functions
+// Miscellaneous variables
 // ================================================================
-const bold_fn = function(){ tagger("<strong>", "</strong>") }
-const italic_fn = function(){ tagger("<em>", "</em>") }
-const underline_fn = function(){ tagger("<u>", "</u>") }
+// Variable to track current block
+let last_block_focussed = -1
 
-const code_fn = function(){ tagger(
-	"<div class='m-3 p-3 bg-dark'><p class='text-light'>",
-	"</p></div>") }
+// Ignore add and remove block buttons
+const formatting_btns_index = 2
 
-const heading_fn = function(event){
-	console.log(event)
-	tagger(`<${event.target.innerText}>`, `</${event.target.innerText}>`) }
-
-const hr_fn = function(){ tagger("<hr>") }
-const br_fn = function(){ tagger("<br>") }
-const lead_fn = function(){ tagger("<p class='lead'>", "</p>") }
+// Categories of styles
+const block_styles = ["h1", "h2", "h3", "h4", "h5", "h6", "lead", "code"]
+const text_styles = ["bold", "italic", "underline", "strikethrough"]
 
 // ================================================================
-// DOM events - Binding functions to events
+// DOM functions
 // ================================================================
-bold_btn.onclick = bold_fn
-italic_btn.onclick = italic_fn
-underline_btn.onclick = underline_fn
-code_btn.onclick = code_fn
 
-for (var i = 0; i < heading_btns.length; i++) {
-	heading_btns[i].onclick = heading_fn
+// Appends a block to the writer
+const add_block = function (){
+	// Clone template to create a new blank block
+	let temp = document.querySelector("template")
+	temp = temp.content.cloneNode(true)
+	temp = temp.querySelector("div.block")
+
+	// Default - No style
+	temp.setAttribute("data-style", "")
+
+	temp.children[0].innerText = $("div.block").length
+	// Add to writer and re-render all blocks
+	writer.append(temp)
+	re_render_blocks()
+	last_block_focussed = $("div.block").length - 1
+
+	// Highlight newly focussed element
+	highlight_focussed()
 }
 
-hr_btn.onclick = hr_fn
-br_btn.onclick = br_fn
-lead_btn.onclick = lead_fn
-
-// ================================================================
-// Handle tabspace in textarea
-// ================================================================
-text.onkeydown =  function(event){
-	// key is pressed while focus is on the editor textarea
-	if (event.keyCode == 9) {
-		// tab key
-		start = text.selectionStart
-		text.value = text.value.slice(0, start) + "&emsp;" +
-					text.value.slice(start, text.value.length)
-		text.selectionStart = start + 4
-		text.selectionEnd = start + 4
-		text.focus()
-
-	}
-	if (event.keyCode == 13) {
-		start = text.selectionStart
-		text.value = text.value.slice(0, start) + "<br>" +
-					text.value.slice(start, text.value.length)
-	}
+// Removes currently selected block from writer
+const remove_block = function (){
+	// Get current block
+	current_block = $("div.block")[last_block_focussed]
+	// Remove
+	current_block.remove()
+	// Re-render all blocks
+	re_render_blocks()
+	// Reset last focussed block
+	last_block_focussed = $("div.block").length - 1
+	// Highlight newly focussed element
+	highlight_focussed()
 }
 
-// ================================================================
-// Render HTML preview of textarea content
-// ================================================================
-const generate_preview = function(){
-	// console.log(text.value)
-	if (text.value.length) {
-		preview.classList.remove("d-flex")
-		preview.innerHTML = text.value
-	} else {
-		preview.classList.add("d-flex")
-		preview.innerHTML = '<p class="lead m-auto d-block text-muted">\
-							live preview</p>'
-	}
-}
-
-// ================================================================
-// Add tag at cursor/around the selection
-// ================================================================
-const tagger = (tag_start = "", tag_end = "")=>{
-	const sel_start = text.selectionStart
-	const sel_end = text.selectionEnd
-	console.log("tagger")
-	if (tag_end != "" && tag_start!= ""){
-		if (sel_start != sel_end) {
-			start = text.value.slice(0, sel_start)
-			mid = text.value.slice(sel_start, sel_end)
-			end = text.value.slice(sel_end, text.value.length)
-
-			// console.log(sel_start, sel_end, text.value)
-			if(mid.indexOf(tag_start) != -1 && mid.indexOf(tag_end) != -1){
-				mid = tag_start +
-					mid.split(tag_start).join("").split(tag_end).join("") +
-					tag_end
-			}else if(mid.indexOf(tag_start) != -1){
-				mid = tag_start + mid.split(tag_start).join("")
-			}else if(mid.indexOf(tag_end) != -1){
-				mid = mid.split(tag_end).join("") + tag_end
-			}else{
-				mid = tag_start + mid + tag_end
+// Applies the given style according to the category
+const apply_style = function (format_style){
+	if (last_block_focussed != -1){
+		console.log(`Applying style : ${format_style}`)
+		console.log(`To block : ${last_block_focussed}`)
+		current_block = $("div.block")[last_block_focussed]
+		current_block_style = current_block.getAttribute("data-style") 
+		if (block_styles.indexOf(format_style) != -1){
+			// If the style is to be applied to the whole block
+			if(current_block_style == format_style){
+				// If style is already applied remove the style
+				current_block.setAttribute("data-style",  "")
+			} else {
+				// Else remove all formatting and apply the style
+			    document.execCommand("removeFormat", false);
+				current_block.setAttribute("data-style",  format_style)
 			}
-			text.value = start + mid + end
-			console.log(text.value)
-			// return text.value
+		} else if (text_styles.indexOf(format_style) != -1){
+			// If the style is to be applied on text
+			if (!(format_style == "bold" && current_block_style != "")){
+			    document.execCommand(format_style, false);}
+		} else if (format_style.indexOf("forecolor") != -1){
+			// In case of text color, slice the hex value to get color code
+			color = format_style.split("_")[1]
+		    document.execCommand("forecolor", false, color);
+		} else if (format_style.indexOf("backcolor") != -1){
+			// In case of highlight, slice the hex value to get color code
+			color = format_style.split("_")[1]
+		    document.execCommand("backcolor", false, color);
+		} else if (format_style == "ordered-list"){
+			// Insert ordered list at current select or pointer
+		    document.execCommand("insertOrderedList", false);
+		} else if (format_style == "unordered-list"){
+			// Insert unordered list at current select or pointer
+		    document.execCommand("insertUnorderedList", false);
 		}
-	} else if (tag_start!= "") {
-		start = text.value.slice(0, sel_start)
-		end = text.value.slice(sel_start, text.value.length)
-		text.value = start + tag_start + end
+		re_render_blocks()
+	} else {
+		console.log('No block selected!')
 	}
-	text.focus()
+}
+
+// Re-renders all blocks in the writer pane while:
+// - applying block level style according to individual attributes
+// - refreshing all event listeners
+const re_render_blocks = function(){
+	// Get all blocks
+	const blocks=document.querySelectorAll("div.block")
+	// Loop over them
+	for (var i = 0; i < blocks.length; i++) {
+		// Set block index
+		blocks[i].setAttribute("data-block-index", i)
+		// Get block type
+		block_type = blocks[i].getAttribute("data-style") 
+		// Set block type as class of block's first(only) child
+		blocks[i].children[0].classList = [block_type]
+
+		// Event listeners to update last block focussed on click and tabs
+		blocks[i].onclick = function(){
+			// Clicking focusses on the block
+			last_block_focussed = Number(this.getAttribute("data-block-index"))
+			// Highlight newly focussed element
+			highlight_focussed()
+		}
+
+		blocks[i].onkeyup = function(event){
+			if (last_block_focussed != -1){
+				new_block_index = Number(this.getAttribute("data-block-index"))
+
+				if (event.shiftKey && event.keyCode == 9){
+					// Pressing shift + tab focusses on previous block if any
+					last_block_focussed = new_block_index
+				} else if (event.keyCode == 9 && new_block_index){
+					// Pressing tab focusses on next block if any
+					last_block_focussed = new_block_index
+				}
+			}
+			// Highlight newly focussed element
+			highlight_focussed()
+		}
+
+		blocks[i].onpaste = function(e) {
+		    // Cancel paste
+		    e.preventDefault();
+		    // Get text representation of clipboard
+			const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+		    // Insert text manually
+		    document.execCommand("insertHTML", false, text);
+		}
+	}
+}
+
+// Highlights last focussed block
+const highlight_focussed = function(){
+	// Remove class current from focussed element if any
+	if (last_block_focussed != -1){
+		prev_block = $("div.block.current")
+		if (prev_block.length) {
+			prev_block[0].classList.remove("current")}
+		current_block = $("div.block")[last_block_focussed]
+		current_block.classList.add("current")
+	}
 }
 
 // ================================================================
-// Bind multiple events for live rendering based on interactions
+// Bind functions to their respective buttons
 // ================================================================
-text.onchange = generate_preview
-text.keydown = generate_preview
-text.focus = generate_preview
-text.oninput = generate_preview
+
+add_block_btn.onclick = add_block
+remove_block_btn.onclick = remove_block
+
+for (let i = formatting_btns_index; i < formatting_btns.length; i++) {
+	formatting_btns[i].onclick = function(){
+		apply_style(this.getAttribute("data-style") )
+	}
+}
 
 // ================================================================
-// Run initially when DOM is loaded
-// ================================================================
-generate_preview()
-
 // Generic banner to debug if script is imported correctly
 const __banner__ = "Jedi is a dynamic and embeddable rich text editor."
 console.log(__banner__)
