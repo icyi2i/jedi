@@ -2,140 +2,231 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-  <meta name="description" content="Jedi - JavaScript based editor">
-  <meta name="keywords" content="Simple, Editor, JavaScript, Embeddable">
-  <meta name="author" content="Sarthak Gambhir">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Jedi - JavaScript based editor">
+	<meta name="keywords" content="Simple, Editor, JavaScript, Embeddable">
+	<meta name="author" content="Sarthak Gambhir">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Jedi - DEMO</title>
-	<link rel="stylesheet" type="text/css"
-		href={{url_for("static", filename="css/jedi.css")}}>
-	<link rel="stylesheet" type="text/css"
-		href={{url_for("static", filename="css/bootstrap.min.css")}}>
-	<link rel="stylesheet" type="text/css"
-		href={{url_for("static", filename="css/icons.css")}}>
+	<link rel="stylesheet" type="text/css" href={{ url_for("static", filename="css/bootstrap.min.css")}}>
+	<link rel="stylesheet" type="text/css" href={{ url_for("static", filename="css/jedi.css")}}>
+	<link rel="stylesheet" type="text/css" href={{ url_for("static", filename="css/icons.css")}}>
 </head>
 <body>
 	<main>
 		<div class="container">
-			<div class="col-12 my-2">
-				<p class="text-center h4 my-3">
-					<strong>Jedi</strong> - A javascript based editor!</p>
-			</div>
-			<div id="jedi-editor" class="row">
-				<div id="jedi-menu" class="col-12 row m-0 p-0 bg-light">
-					<div class="col-12 col-md-6 row w-100 m-0 p-0 group">
-					  <button id="add-block-btn" class="btn btn-light">
-							<span class="icon-plus px-2"></span>Add block</button>
-					  <button id="remove-block-btn" class="btn btn-light">
-							<span class="icon-cross px-2"></span>Remove block</button>
-
-						<button class="btn btn-light" data-style="bold">
-							<span class="icon-bold"></span></button>
-					  <button class="btn btn-light" data-style="italic">
-					  	<span class="icon-italic"></span></button>
-					  <button class="btn btn-light" data-style="underline">
-					  	<span class="icon-underline"></span></button>
-					  <button class="btn btn-light" data-style="strikethrough">
-					  	<span class="icon-strikethrough"></span></button>
-					  <div class="dropdown">
-						  <button class="btn btn-light dropdown-toggle"
-						  	type="button" id="dropdownMenuButton" data-toggle="dropdown"
-						  	aria-haspopup="true" aria-expanded="false">
-					  		<span class="icon-text-color"></span>
-						  </button>
-						  <div class="dropdown-menu dropdown-menu-center"
-						  	aria-labelledby="dropdownMenuButton"
-						  	style="background-color:#f4f8ff;">
-						    <button class="dropdown-item" data-style="forecolor_#212529"
-						    	style="color: #212529;">Default (Dark)</button>
-						    <button class="dropdown-item" data-style="forecolor_#dd0000"
-						    	style="color: #dd0000;">Red</button>
-						    <button class="dropdown-item" data-style="forecolor_#009048"
-						    	style="color: #009048;">Green</button>
-						    <button class="dropdown-item" data-style="forecolor_#127aea"
-						    	style="color: #127aea;">Blue</button>
-						    <button class="dropdown-item" data-style="forecolor_#ff8018"
-						    	style="color: #ff8018;">Orange</button>
-						    <button class="dropdown-item" data-style="forecolor_#ffba3a"
-						    	style="background: #333333;color: #ffba3a;">Yellow</button>
-						    <button class="dropdown-item" data-style="forecolor_#f8f9fa"
-						    	style="background: #333333;color: #f8f9fa;">Light</button>
-						  </div>
-						</div>
-						<div class="dropdown">
-						  <button class="btn btn-light dropdown-toggle" type="button"
-						  	id="dropdownMenuButton" data-toggle="dropdown"
-						  	aria-haspopup="true" aria-expanded="false">
-					  		<span class="icon-highlight"></span>
-						  </button>
-						  <div class="dropdown-menu dropdown-menu-right"
-						  	aria-labelledby="dropdownMenuButton">
-						    <button class="dropdown-item" data-style="backcolor_#f8f9fa"
-						    	style="background-color: #f8f9fa;">Default (Light)</button>
-						    <button class="dropdown-item" data-style="backcolor_#ffb8b8"
-						    	style="background-color: #ffb8b8;">Red</button>
-						    <button class="dropdown-item" data-style="backcolor_#aaeecc"
-						    	style="background-color: #aaeecc;">Green</button>
-						    <button class="dropdown-item" data-style="backcolor_#c4e0ff"
-						    	style="background-color: #c4e0ff;">Blue</button>
-						    <button class="dropdown-item" data-style="backcolor_#ffde86"
-						    	style="background-color: #ffde86;">Yellow</button>
-						    <button class="dropdown-item" data-style="backcolor_#ffbf88"
-						    	style="background-color: #ffbf88;">Orange</button>
-						    <button class="dropdown-item" data-style="backcolor_#212529"
-						    	style="background-color: #212529; color:#f8f9fa">Dark</button>
-						  </div>
-						</div>
-					  <div class="dropdown">
-						  <button class="btn btn-light dropdown-toggle" type="button"
-						  	id="dropdownMenuButton" data-toggle="dropdown"
-						  	aria-haspopup="true" aria-expanded="false">
-						  	<span class="icon-text-size"></span>
-						  </button>
-						  <div class="dropdown-menu dropdown-menu-right"
-						  	aria-labelledby="dropdownMenuButton">
-						    <button class="dropdown-item h1" data-style="h1">h1
-									</button>
-						    <button class="dropdown-item h2" data-style="h2">h2
-									</button>
-						    <button class="dropdown-item h3" data-style="h3">h3
-									</button>
-						    <button class="dropdown-item h4" data-style="h4">h4
-									</button>
-						    <button class="dropdown-item h5" data-style="h5">h5
-									</button>
-						    <button class="dropdown-item h6" data-style="h6">h6
-									</button>
-					  		<button class="dropdown-item lead" data-style="lead">lead
-									</button>
+			<div class="col-12 my-2 mx-0 p-0">
+				<p class="text-center h4 my-3"><strong>Jedi</strong>
+					- A javascript based editor!</p>
+				</div>
+				
+				<!-- EDITOR -->
+				<div id="jedi-editor" class="row mx-0 px-0">
+					<div id="jedi-menu" class="col-12 bg-light">
+						<div class="row jedi-menu-group">
+							<div class="col-4 col-md-2 p-0">
+								<!-- File operation dropdown -->
+								<div class="dropdown">
+									<button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">File</button>
+									<div class="dropdown-menu m-0 bg-lightish" aria-labelledby="dropdownMenuButton">
+										<!-- Doc operations buttons -->
+										<input type="file" id="upload-input" hidden>
+										<label for="upload-input" id="upload-btn" class="btn btn-light dropdown-item m-0">
+											<span class="icon-open px-2"></span>Open
+										</label>
+										<button id="export-btn" class="btn btn-light dropdown-item">
+											<span class="icon-download px-2"></span>Export HTML
+										</button>
+										<button id="save-btn" class="btn btn-light dropdown-item">
+											<span class="icon-save px-2"></span>Save
+										</button>
+										<button id="load-btn" class="btn btn-light dropdown-item">
+											<span class="icon-load px-2"></span>Load
+										</button>
+									</div>
+								</div>
+							</div>
+							<!-- Block manipulation buttons -->
+							<div class="col-4 col-md-2 p-0">
+								<button id="add-block-btn" class="btn btn-light">
+									<span class="icon-add px-2"></span>
+								</button>
+							</div>
+							<div class="col-4 col-md-2 p-0">
+								<button id="remove-block-btn" class="btn btn-light">
+									<span class="icon-remove px-2"></span>
+								</button>
+							</div>
+							<div class="col-4 col-md-2 p-0">
+								<button id="move-block-up-btn" class="btn btn-light">
+									<span class="icon-move-up px-2"></span>
+								</button>
+							</div>
+							<div class="col-4 col-md-2 p-0">
+								<button id="move-block-down-btn" class="btn btn-light">
+									<span class="icon-move-down px-2"></span>
+								</button>
+							</div>
+							<div class="col-4 col-md-2 p-0">
+								<button id="split-block-btn" class="btn btn-light">
+									<span class="icon-split px-2"></span>
+								</button>
 							</div>
 						</div>
-				  	<button class="btn btn-light" data-style="code">
-					  	<span class="icon-code"></span></button>
-					  <button class="btn btn-light" data-style="ordered-list">
-					  	<span class="icon-list-ordered"></span></button>
-					  <button class="btn btn-light" data-style="unordered-list">
-					  	<span class="icon-list-unordered"></span></button>
+						<div id="format-btns" class="row jedi-menu-group">
+							<div class="col-12 col-md-4 col-lg-2 m-0 p-0 d-flex">
+								
+								<!-- Text styles -->
+								<button class="btn btn-light" data-style="bold">
+									<span class="icon-bold"></span></button>
+									<button class="btn btn-light" data-style="italic">
+										<span class="icon-italic"></span>
+									</button>
+									<button class="btn btn-light" data-style="underline">
+										<span class="icon-underline"></span>
+									</button>
+								</div>
+								<div class="col-12 col-md-4 col-lg-2 m-0 p-0 d-flex">
+									<button class="btn btn-light" data-style="strikethrough">
+										<span class="icon-strikethrough"></span>
+									</button>
+									<button class="btn btn-light" data-style="subscript">
+										<span class="icon-subscript"></span>
+									</button>
+									<button class="btn btn-light" data-style="superscript">
+										<span class="icon-superscript"></span>
+									</button>
+								</div>
+								<div class="col-12 col-md-4 col-lg-2 m-0 p-0 d-flex">
+									<button class="btn btn-light" data-style="indent">
+										<span class="icon-indent-increase"></span>
+									</button>
+									<button class="btn btn-light" data-style="outdent">
+										<span class="icon-indent-decrease"></span>
+									</button>
+									<!-- Clear formatting button -->
+									<button class="btn btn-light" data-style="removeFormat">
+										<span class="icon-clear-formatting"></span>
+									</button>
+								</div>
+								<div class="col-12 col-md-6 col-lg-3 m-0 p-0 d-flex">
+									<!-- Text alignment dropdown -->
+									<div class="dropdown">
+										<button class="btn btn-light dropdown-toggle"
+										type="button" id="dropdownMenuButton" data-toggle="dropdown"
+										aria-haspopup="true" aria-expanded="false">
+										<span class="icon-align-center"></span>
+									</button>
+									<div class="dropdown-menu dropdown-menu-center"
+									aria-labelledby="dropdownMenuButton"
+									style="background-color:#f4f8ff;">
+									<button class="dropdown-item" data-style="justifyLeft">
+										<span class=" mr-2 icon-align-left"></span>Left
+									</button>
+									<button class="dropdown-item" data-style="justifyCenter">
+										<span class=" mr-2 icon-align-center"></span>Center
+									</button>
+									<button class="dropdown-item" data-style="justifyRight">
+										<span class=" mr-2 icon-align-right"></span>Right
+									</button>
+									<button class="dropdown-item" data-style="justifyFull">
+										<span class=" mr-2 icon-align-justify"></span>Justify
+									</button>
+								</div>
+							</div>
+							<!-- Text color dropdown -->
+							<div class="dropdown">
+								<button class="btn btn-light dropdown-toggle"
+								type="button" id="dropdownMenuButton" data-toggle="dropdown"
+								aria-haspopup="true" aria-expanded="false">
+								<span class="icon-text-color"></span>
+							</button>
+							<div class="dropdown-menu dropdown-menu-center"
+							aria-labelledby="dropdownMenuButton"
+							style="background-color:#f4f8ff;">
+							<button class="dropdown-item" data-style="forecolor_#212529"
+							style="color: #212529;">Default (Dark)</button>
+							<button class="dropdown-item" data-style="forecolor_#dd0000"
+							style="color: #dd0000;">Red</button>
+							<button class="dropdown-item" data-style="forecolor_#009048"
+							style="color: #009048;">Green</button>
+							<button class="dropdown-item" data-style="forecolor_#127aea"
+							style="color: #127aea;">Blue</button>
+							<button class="dropdown-item" data-style="forecolor_#ff8018"
+							style="color: #ff8018;">Orange</button>
+							<button class="dropdown-item" data-style="forecolor_#ffba3a"
+							style="background: #333333;color: #ffba3a;">Yellow</button>
+							<button class="dropdown-item" data-style="forecolor_#f8f9fa"
+							style="background: #333333;color: #f8f9fa;">Light</button>
+						</div>
 					</div>
+					<!-- Text highlight color dropdown -->
+					<div class="dropdown">
+						<button class="btn btn-light dropdown-toggle" type="button"
+						id="dropdownMenuButton" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false">
+						<span class="icon-highlight-color"></span>
+					</button>
+					<div class="dropdown-menu dropdown-menu-right"
+					aria-labelledby="dropdownMenuButton">
+					<button class="dropdown-item" data-style="backcolor_#f8f9fa"
+					style="background-color: #f8f9fa;">Default (Light)</button>
+					<button class="dropdown-item" data-style="backcolor_#ffb8b8"
+					style="background-color: #ffb8b8;">Red</button>
+					<button class="dropdown-item" data-style="backcolor_#aaeecc"
+					style="background-color: #aaeecc;">Green</button>
+					<button class="dropdown-item" data-style="backcolor_#c4e0ff"
+					style="background-color: #c4e0ff;">Blue</button>
+					<button class="dropdown-item" data-style="backcolor_#ffde86"
+					style="background-color: #ffde86;">Yellow</button>
+					<button class="dropdown-item" data-style="backcolor_#ffbf88"
+					style="background-color: #ffbf88;">Orange</button>
+					<button class="dropdown-item" data-style="backcolor_#212529"
+					style="background-color: #212529; color:#f8f9fa">Dark</button>
 				</div>
-
-				<div class="col-12 p-0" id="jedi-writer" name="writer"></div>
 			</div>
 		</div>
-	</main>
-  <template>
-		<div class="block">
-			<div class="m-0 p-0" contenteditable="true"></div>
+		<div class="col-12 col-md-6 col-lg-3 m-0 p-0 d-flex">
+			<!-- Heading/Text block type dropdown -->
+			<div class="dropdown">
+				<button class="btn btn-light dropdown-toggle" type="button"
+				id="dropdownMenuButton" data-toggle="dropdown"
+				aria-haspopup="true" aria-expanded="false">
+				<span class="icon-text-block"></span>
+			</button>
+			<div class="dropdown-menu dropdown-menu-right"
+			aria-labelledby="dropdownMenuButton">
+			<button class="dropdown-item h1" data-style="h1">h1</button>
+			<button class="dropdown-item h2" data-style="h2">h2</button>
+			<button class="dropdown-item h3" data-style="h3">h3</button>
+			<button class="dropdown-item h4" data-style="h4">h4</button>
+			<button class="dropdown-item h5" data-style="h5">h5</button>
+			<button class="dropdown-item h6" data-style="h6">h6</button>
+			<button class="dropdown-item lead" data-style="lead">lead</button>
 		</div>
-	</template>
+	</div>
+	<button class="btn btn-light col-4" data-style="code">
+		<span class="icon-code"></span></button>
+		<button class="btn btn-light col-4" data-style="unordered-list">
+			<span class="icon-list-unordered"></span></button>
+		</div>
+	</div>
+</div>
+<div id="jedi-writer" class="col-12 bg-light">
+</div>
+</div>
 
-	<script src={{url_for("static", filename="js/jquery.min.js")}}
-		type="text/javascript" charset="utf-8"></script>
-	<script src={{url_for("static", filename="js/popper.min.js")}}
-		type="text/javascript" charset="utf-8"></script>
-	<script src={{url_for("static", filename="js/bootstrap.min.js")}}
-		type="text/javascript" charset="utf-8"></script>
-	<script src={{url_for("static", filename="js/jedi.js")}}
-		type="text/javascript" charset="utf-8"></script>
+</div>
+</main>
+<template id="block-template">
+	<div class="block">
+		<div class="m-0 p-0" contenteditable="true" placeholder="Write something"></div>
+	</div>
+</template>
+<a href="" download="true" hidden="true" id="download-content-html"></a>
+
+<script src={{url_for("static", filename="js/jquery.min.js")}} type="text/javascript" charset="utf-8"></script>
+<script src={{url_for("static", filename="js/popper.min.js")}} type="text/javascript" charset="utf-8"></script>
+<script src={{url_for("static", filename="js/bootstrap.min.js")}} type="text/javascript" charset="utf-8"></script>
+<script src={{url_for("static", filename="js/jedi.js")}} type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

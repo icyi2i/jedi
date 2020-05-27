@@ -1,56 +1,86 @@
+:root{
+	--lightish :#f4f8ff;
+	--grayish :#aaaa;
+	--muted :#888;
+	--highlight:#8bb3ff;
+};
 #jedi-editor{
 	width: 100%;
-	display: flex
+	display: flex;
+}
+#jedi-editor .bg-lightish{
+	background-color: var(--lightish)
 }
 
-#jedi-writer, #jedi-preview{
+/* ================================================================ */
+/* MENU BAR */
+/* ================================================================ */
+
+.jedi-menu-group > div{
+	background: var(--grayish);
+}
+#jedi-menu div.jedi-menu-group .btn.btn-light:not(.dropdown-item){
+	font-size: 20px!important;
+	border: 2px solid var(--grayish);
 	width: 100%;
-	border: 2px solid #aaaa;
+}
+#jedi-menu div.jedi-menu-group .dropdown{
+	width: inherit;
+	height: 100%;
+}
+#jedi-menu div.group{
+	display: flex!important;
+}
+#jedi-menu button:focus{
+	background: var(--highlight)!important
+}
+#jedi-menu button.dropdown-toggle{
+	width: 100%;
+	min-height: 100%!important;
+	font-size: 20px!important;
+}
+#jedi-menu .dropdown-item:hover{
+	border: 1px solid var(--highlight);
+}
+
+#jedi-menu .dropdown-menu{
+	padding: 0
+}
+
+/* ================================================================ */
+/* WRITER SECTION */
+/* ================================================================ */
+
+#jedi-writer{
+	width: 100%;
+	border: 2px solid var(--grayish);
 	padding: 5px;
 	overflow-y: scroll;
 	height: 80vh!important;
 	min-height: 80vh!important;
 	max-height: 80vh!important;
 }
-
-#jedi-menu div.group{
-	display: contents!important;
-	font-size: 20px;
-}
-
-#jedi-menu div.group > button, #jedi-menu div.group > .dropdown{
-	flex: auto;
-	display: block;
-}
-
-button.dropdown-toggle{
-	width: 100%;
-	min-height: 100%!important;
-	font-size: 20px!important;
-}
-
-.block{
+#jedi-writer .block{
 	border: 1px solid #ddd;
-	margin: 5px;
-	padding: 5px;
-	background-color: #f8f9fa;
+	margin: 5px 10px;
+	padding: 10px;
+	background-color: #ffffff;
+	/*overflow-x: scroll;*/
 }
-.code{
+#jedi-writer .block.current{
+	border: 2px solid var(--highlight);
+}
+#jedi-writer .block .code{
 	background-color: #333;
 	color: var(--light)!important;
 	padding: 20px!important;
 	display: block;
 	overflow-x: scroll;
 }
-
-.current{
-	border: 2px solid #8bb3ff;
+#jedi-writer .block blockquote{
+	margin : 2px 0px 2px 20px!important;
 }
-
-button:focus{
-	background: #8bb3ff!important
-}
-
-.dropdown-item:hover{
-	border: 1px solid #8bb3ff;
+#jedi-writer .block > div:empty:not(:focus):before{
+	content:attr(placeholder);
+	color: var(--muted);
 }

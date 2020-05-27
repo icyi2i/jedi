@@ -7,9 +7,18 @@ const writer = $("#jedi-writer")[0]
 // ================================================================
 // DOM elements - Editor menu buttons
 // ================================================================
+const upload_input = $("#upload-input")[0]
+const export_btn = $("#export-btn")[0]
+const save_btn = $("#save-btn")[0]
+const load_btn = $("#load-btn")[0]
 const add_block_btn = $("#add-block-btn")[0]
 const remove_block_btn = $("#remove-block-btn")[0]
-const formatting_btns = $("#jedi-menu button:not(.dropdown-toggle)")
+const move_block_up_btn = $("#move-block-up-btn")[0]
+const move_block_down_btn = $("#move-block-down-btn")[0]
+const split_block_btn = $("#split-block-btn")[0]
+const format_btns = $("#jedi-menu #format-btns button:not(.dropdown-toggle)")
+
+const content_download_link = $("#download-content-html")[0]
 
 // ================================================================
 // Miscellaneous variables
@@ -17,30 +26,36 @@ const formatting_btns = $("#jedi-menu button:not(.dropdown-toggle)")
 // Variable to track current block
 let last_block_focussed = -1
 
-// Ignore add and remove block buttons
-const formatting_btns_index = 2
-
 // Categories of styles
 const block_styles = ["h1", "h2", "h3", "h4", "h5", "h6", "lead", "code"]
-const text_styles = ["bold", "italic", "underline", "strikethrough"]
+const text_styles = ["bold", "italic", "underline", "strikethrough",
+	"justifyLeft", "justifyCenter", "justifyRight", "justifyFull",
+	"subscript", "superscript", "indent", "outdent", "removeFormat"]
 
 // ================================================================
 // DOM functions
 // ================================================================
 
 // Appends a block to the writer
-const add_block = function (){
+const add_block = function (event, pos=-1){
+	const blocks = $("div.block")
 	// Clone template to create a new blank block
-	let temp = document.querySelector("template")
+	let temp = document.querySelector("template#block-template")
 	temp = temp.content.cloneNode(true)
 	temp = temp.querySelector("div.block")
 
 	// Default - No style
 	temp.setAttribute("data-style", "")
 
-	temp.children[0].innerText = $("div.block").length
+	// temp.children[0].innerText = blocks.length
 	// Add to writer and re-render all blocks
-	writer.append(temp)
+	if (pos == -1) {
+		// append
+		writer.append(temp)
+	} else {
+		// at specific position except last
+		writer.insertBefore(temp, blocks[pos])
+	}
 	re_render_blocks()
 	last_block_focussed = $("div.block").length - 1
 
@@ -65,8 +80,9 @@ const remove_block = function (){
 // Applies the given style according to the category
 const apply_style = function (format_style){
 	if (last_block_focussed != -1){
+		// If a block is selected
 		console.log(`Applying style : ${format_style}`)
-		console.log(`To block : ${last_block_focussed}`)
+		// console.log(`To block : ${last_block_focussed}`)
 		current_block = $("div.block")[last_block_focussed]
 		current_block_style = current_block.getAttribute("data-style") 
 		if (block_styles.indexOf(format_style) != -1){
@@ -91,16 +107,11 @@ const apply_style = function (format_style){
 			// In case of highlight, slice the hex value to get color code
 			color = format_style.split("_")[1]
 		    document.execCommand("backcolor", false, color);
-		} else if (format_style == "ordered-list"){
-			// Insert ordered list at current select or pointer
-		    document.execCommand("insertOrderedList", false);
 		} else if (format_style == "unordered-list"){
 			// Insert unordered list at current select or pointer
 		    document.execCommand("insertUnorderedList", false);
 		}
 		re_render_blocks()
-	} else {
-		console.log('No block selected!')
 	}
 }
 
@@ -117,7 +128,9 @@ const re_render_blocks = function(){
 		// Get block type
 		block_type = blocks[i].getAttribute("data-style") 
 		// Set block type as class of block's first(only) child
-		blocks[i].children[0].classList = [block_type]
+		if (blocks[i].children[0] != undefined) {
+			blocks[i].children[0].classList = [block_type]
+		}
 
 		// Event listeners to update last block focussed on click and tabs
 		blocks[i].onclick = function(){
@@ -147,11 +160,16 @@ const re_render_blocks = function(){
 		    // Cancel paste
 		    e.preventDefault();
 		    // Get text representation of clipboard
-			const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+			const text = (e.originalEvent || e).clipboardData.getData(
+				'text/plain').split("\n").join("\r\n");
 		    // Insert text manually
-		    document.execCommand("insertHTML", false, text);
+		    document.execCommand("insertText", false, text);
 		}
+
+		blocks[i].classList.remove("current")
 	}
+
+	save_content_to_localstorage()
 }
 
 // Highlights last focussed block
@@ -162,19 +180,141 @@ const highlight_focussed = function(){
 		if (prev_block.length) {
 			prev_block[0].classList.remove("current")}
 		current_block = $("div.block")[last_block_focussed]
-		current_block.classList.add("current")
+		if (current_block != undefined){
+				current_block.classList.add("current")}
+	}
+}
+
+// Move block up/down
+const move_block = function(direction = ''){
+	if (last_block_focussed != -1) {
+		// Get current block
+		current_block = $("div.block")[last_block_focussed]
+		console.log(current_block)
+		if (direction == "up" && last_block_focussed != 0) {
+			// Move up
+			current_block.after(current_block.previousSibling)
+			last_block_focussed = last_block_focussed - 1
+		} else if (direction == "down" &&
+			last_block_focussed != $("div.block").length -1) {
+			current_block.before(current_block.nextSibling)
+			last_block_focussed = last_block_focussed + 1
+		}
+		highlight_focussed()
+	}
+}
+
+// Split block at caret
+const split_block =  function () {
+	var blocks = $("div.block")
+	const block_to_split = last_block_focussed
+	let target = document.createTextNode("\u0001");
+	document.getSelection().getRangeAt(0).insertNode(target);
+	let caret_pos = blocks[block_to_split].outerHTML.indexOf("\u0001");
+	target.parentNode.removeChild(target);
+
+	// console.log(caret_pos)
+	if(caret_pos != -1){
+		// If block is not empty
+		first_block = blocks[block_to_split].outerHTML.slice(0, caret_pos)
+		second_block = blocks[block_to_split].outerHTML.slice(caret_pos)
+
+		add_block(undefined, block_to_split + 1)
+		add_block(undefined, block_to_split + 1)
+
+		blocks = $("div.block")
+		blocks[block_to_split + 1].outerHTML = first_block
+
+		second_block_content = ""
+		second_block_elements = $.parseHTML(second_block)
+		if(second_block_elements != undefined){
+			for (var i = 0; i < second_block_elements.length; i++) {
+				const current_el = second_block_elements[i]
+				if (current_el.nodeName == "#text") {
+					current_content = current_el.textContent
+					current_content = current_content.replace("\n", "")
+					current_content = current_content.replace("\t", "")
+					current_content = current_content.trimStart()
+					current_content = current_content.trimEnd()
+					second_block_content = second_block_content + current_content
+				} else {
+					second_block_content = second_block_content + current_el.outerHTML
+				}
+			}
+			blocks[block_to_split + 2].children[0].innerHTML = second_block_content
+			blocks[block_to_split].remove()
+			last_block_focussed = block_to_split + 1
+			re_render_blocks()
+			highlight_focussed()
+		}
+	}
+}
+
+// Export all blocks in a preformatted HTML file
+const export_doc = function(){
+	blocks = $("div.block")
+	content_body = ""
+	for (var i = 0; i < blocks.length; i++) {
+		content_body = content_body + blocks[i].outerHTML
+	}
+	return content_body
+}
+
+const save_content_to_localstorage = function(){
+	blocks = $("div.block")
+	content_body = ""
+	for (var i = 0; i < blocks.length; i++) {
+		content_body = content_body + blocks[i].outerHTML
+	}
+	localStorage.setItem("content", content_body);
+}
+
+const load_content_from_localstorage = function(){
+	writer.innerHTML = localStorage.getItem("content")
+	const blocks = $("div.block")
+	last_block_focussed = blocks.length - 1
+	highlight_focussed()
+}
+
+const load_content_from_file = function(){
+	if (this.files && this.files[0]) {
+		var uploaded_file = this.files[0];
+		var reader = new FileReader();
+
+		reader.addEventListener('load', function (e) {
+			writer.innerHTML = e.target.result;
+			const blocks = $("div.block")
+			last_block_focussed = blocks.length - 1
+			highlight_focussed()
+		});
+
+		reader.readAsBinaryString(uploaded_file);
 	}
 }
 
 // ================================================================
 // Bind functions to their respective buttons
 // ================================================================
-
+upload_input.onchange = load_content_from_file
+export_btn.onclick = function(){
+	save_content_to_localstorage()
+	let data = new Blob([localStorage.getItem("content")], {type: 'text/HTML'});
+	let data_url  = window.URL.createObjectURL(data);
+	content_download_link.href = data_url
+	// console.log(data_url)
+	content_download_link.click()
+}
+save_btn.onclick = save_content_to_localstorage
+load_btn.onclick = load_content_from_localstorage
 add_block_btn.onclick = add_block
 remove_block_btn.onclick = remove_block
+move_block_up_btn.onclick = function(){move_block(direction = 'up')}
+move_block_down_btn.onclick = function(){move_block(direction = 'down')}
+split_block_btn.onclick = split_block
 
-for (let i = formatting_btns_index; i < formatting_btns.length; i++) {
-	formatting_btns[i].onclick = function(){
+
+for (let i = 0; i < format_btns.length; i++) {
+	format_btns[i].onclick = function(){
 		apply_style(this.getAttribute("data-style") )
 	}
 }
@@ -183,3 +323,4 @@ for (let i = formatting_btns_index; i < formatting_btns.length; i++) {
 // Generic banner to debug if script is imported correctly
 const __banner__ = "Jedi is a dynamic and embeddable rich text editor."
 console.log(__banner__)
+
